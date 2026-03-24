@@ -25,10 +25,8 @@ const PROJECTS = [
         tags: ["HTML", "CSS", "JavaScript", "Python"],
         liveUrl: "https://livepro.site/TimroData/1/",
         featured: true
-    }
-    
-    /*
-    , {
+    }, /*
+    {
         id: 2,
         title: "Real-Time Chat Application",
         description: "A modern chat application featuring real-time messaging, user authentication, and online status indicators using WebSocket technology.",

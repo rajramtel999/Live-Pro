@@ -56,7 +56,7 @@ function renderProjects() {
  */
 function createProjectCard(project, index) {
     const card = document.createElement('article');
-    card.className = 'project-card';
+    card.className = 'project-card' + (project.featured ? ' featured' : '');
     card.setAttribute('data-project-id', project.id);
     card.style.animationDelay = `${index * 0.1}s`;
 
@@ -67,6 +67,7 @@ function createProjectCard(project, index) {
 
     // Create card content
     card.innerHTML = `
+        ${project.featured ? '<div class="featured-badge">⭐ Featured</div>' : ''}
         <img 
             class="project-image" 
             data-src="${project.image}" 
