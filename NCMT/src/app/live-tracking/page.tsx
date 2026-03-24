@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import LiveMapView from '@/components/LiveMapView';
 import { collection, getDocs } from 'firebase/firestore';
-import { firestore } from '@/config/firebase';
+import { db } from '@/config/firebase';
 import type { RouteDoc, RouteStopDoc, StopDoc } from '@/types/transit';
 
 interface RouteWithStops {
@@ -29,19 +29,19 @@ export default function LiveTrackingPage() {
   async function fetchRoutes() {
     try {
       // Fetch routes
-      const routesSnapshot = await getDocs(collection(firestore, 'routes'));
+      const routesSnapshot = await getDocs(collection(db, 'routes'));
       const routesDocs = routesSnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() } as RouteDoc)
       );
 
       // Fetch route stops
-      const routeStopsSnapshot = await getDocs(collection(firestore, 'routeStops'));
+      const routeStopsSnapshot = await getDocs(collection(db, 'routeStops'));
       const routeStopsDocs = routeStopsSnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() } as RouteStopDoc)
       );
 
       // Fetch stops
-      const stopsSnapshot = await getDocs(collection(firestore, 'stops'));
+      const stopsSnapshot = await getDocs(collection(db, 'stops'));
       const stopsDocs = stopsSnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() } as StopDoc)
       );

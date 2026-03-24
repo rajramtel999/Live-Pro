@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { collection, getDocs } from 'firebase/firestore';
-import { firestore } from '@/config/firebase';
+import { db } from '@/config/firebase';
 import { VehicleSimulator } from '@/lib/vehicleTracking';
-import type { RouteDoc, RouteStopDoc, StopDoc } from '@/types/transit';
+import type { RouteStopWithCoords } from '@/lib/vehicleTracking';
+import type { RouteStopDoc, StopDoc } from '@/types/transit';
 
 // Store active simulators in memory
 const activeSimulators = new Map<string, VehicleSimulator>();
@@ -29,14 +30,14 @@ export async function POST(request: NextRequest) {
       }
 
       // Fetch route stops
-      const routeStopsSnapshot = await getDocs(collection(firestore, 'routeStops'));
+      const routeStopsSnapshot = await getDocs(collection(db, 'routeStops'));
       const routeStopsDocs = routeStopsSnapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() } as RouteStopDoc))
         .filter((rs) => rs.routeId === routeId)
         .sort((a, b) => a.order - b.order);
 
       // Fetch stops coordinates
-      const stopsSnapshot = await getDocs(collection(firestore, 'stops'));
+      const stopsSnapshot = await getDocs(collection(db, 'stops'));
       const stopsDocs = stopsSnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() } as StopDoc)
       );
@@ -49,12 +50,9 @@ export async function POST(request: NextRequest) {
             ...rs,
             latitude: stop.latitude,
             longitude: stop.longitude,
-          };
+          } as RouteStopWithCoords;
         })
-        .filter((s) => s !== null) as (RouteStopDoc & {
-        latitude: number;
-        longitude: number;
-      })[];
+        .filter((s): s is RouteStopWithCoords => s !== null);
 
       if (routeStopsWithCoords.length < 2) {
         return NextResponse.json({

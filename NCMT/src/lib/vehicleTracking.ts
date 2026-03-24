@@ -1,4 +1,4 @@
-import { db } from '@/config/firebase';
+import { getRealtimeDb } from '@/config/firebase';
 import { ref, set, onValue, off } from 'firebase/database';
 import type { RouteStopDoc } from '@/types/transit';
 
@@ -15,6 +15,12 @@ export interface VehiclePosition {
   status: 'moving' | 'stopped';
 }
 
+// RouteStopDoc extended with coordinates (joined from stops collection)
+export interface RouteStopWithCoords extends RouteStopDoc {
+  latitude: number;
+  longitude: number;
+}
+
 /**
  * Update vehicle position in Realtime Database
  */
@@ -22,7 +28,7 @@ export async function updateVehiclePosition(
   vehicleId: string,
   position: VehiclePosition
 ): Promise<void> {
-  const vehicleRef = ref(db, `vehiclePositions/${vehicleId}`);
+  const vehicleRef = ref(getRealtimeDb(), `vehiclePositions/${vehicleId}`);
   await set(vehicleRef, position);
 }
 
@@ -33,7 +39,7 @@ export function subscribeToVehiclePosition(
   vehicleId: string,
   callback: (position: VehiclePosition | null) => void
 ): () => void {
-  const vehicleRef = ref(db, `vehiclePositions/${vehicleId}`);
+  const vehicleRef = ref(getRealtimeDb(), `vehiclePositions/${vehicleId}`);
 
   onValue(vehicleRef, (snapshot) => {
     const data = snapshot.val();
@@ -51,7 +57,7 @@ export function subscribeToRouteVehicles(
   routeId: string,
   callback: (vehicles: Record<string, VehiclePosition>) => void
 ): () => void {
-  const routeRef = ref(db, 'vehiclePositions');
+  const routeRef = ref(getRealtimeDb(), 'vehiclePositions');
 
   onValue(routeRef, (snapshot) => {
     const allVehicles = snapshot.val() || {};
@@ -117,7 +123,7 @@ export class VehicleSimulator {
   constructor(
     private vehicleId: string,
     private routeId: string,
-    private routeStops: RouteStopDoc[]
+    private routeStops: RouteStopWithCoords[]
   ) {}
 
   start(): void {

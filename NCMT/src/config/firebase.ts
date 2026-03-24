@@ -14,10 +14,18 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
+// Firestore instance — exported as both `db` and `firestore` for compatibility
 export const db = getFirestore(app);
+export const firestore = db;
+
+// Realtime Database — lazy getter to avoid crash when DATABASE_URL is not set at build time
+let _database: ReturnType<typeof getDatabase> | null = null;
 
 export function getRealtimeDb() {
-  return getDatabase(app);
+  if (!_database) {
+    _database = getDatabase(app);
+  }
+  return _database;
 }
 
 export default app;
