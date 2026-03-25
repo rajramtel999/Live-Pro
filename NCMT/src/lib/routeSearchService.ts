@@ -13,6 +13,25 @@ import type { RouteSearchResponse, RouteSearchResult } from '@/types/searchResul
 
 interface SearchOptions {
   limit?: number;
+  mode?: 'any' | 'micro' | 'microbus' | 'tempo';
+}
+
+function normalizeMode(mode: string | undefined): 'any' | 'micro' | 'tempo' {
+  if (!mode) {
+    return 'any';
+  }
+
+  const value = mode.trim().toLowerCase();
+
+  if (value === 'microbus' || value === 'micro-bus' || value === 'micro') {
+    return 'micro';
+  }
+
+  if (value === 'tempo') {
+    return 'tempo';
+  }
+
+  return 'any';
 }
 
 export async function searchRoutes(
@@ -31,8 +50,20 @@ export async function searchRoutes(
     };
   }
 
+  const normalizedMode = normalizeMode(options.mode);
+
   const candidateInputs = sampleTransitData.routes
-    .filter((route) => route.isApproved)
+    .filter((route) => {
+      if (!route.isApproved) {
+        return false;
+      }
+
+      if (normalizedMode !== 'any') {
+        return route.type === normalizedMode;
+      }
+
+      return true;
+    })
     .map((route) => {
       const routeStops = sampleTransitData.routeStops.filter(
         (routeStop) => routeStop.routeId === route.id

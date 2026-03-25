@@ -116,11 +116,19 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-4 items-start">
           <span className="text-3xl flex-shrink-0">⚠️</span>
           <div>
-            <h2 className="font-bold text-amber-900 text-lg mb-1">The Problem</h2>
+            <h2 className="font-bold text-amber-900 text-lg mb-1">Crowdsourced Public Transport Route Mapper</h2>
             <p className="text-amber-800 text-sm leading-relaxed">
-              No reliable digital map of micro-bus & tempo routes, stops, or fares exists for commuters or newcomers in Kathmandu Valley.
-              Routes are known only to long-time residents. Newcomers and tourists face significant barriers — no apps, no timetable, no fare guides.
-              <strong> Our platform solves this through community-driven data collection, validation, and a smart route planner.</strong>
+              Kathmandu Valley's micro-bus and tempo network is one of the most used yet least documented systems in Nepal.
+              Commuters and newcomers struggle to find routes, correct stops, and accurate fare information.
+              <strong>Our hackathon solution tackles this with three distinct sides:</strong>
+            </p>
+            <ul className="list-disc pl-6 mt-2 text-amber-800 text-sm leading-relaxed space-y-1">
+              <li><strong>Contributor interface:</strong> drivers, conductors, and commuters submit routes, stops sequence, and fares.</li>
+              <li><strong>Admin dashboard:</strong> transport authority staff review, approve, or correct submissions.</li>
+              <li><strong>Commuter route planner:</strong> users search start/destination and get validated route + fare + nearest boarding stop.</li>
+            </ul>
+            <p className="text-amber-800 text-sm leading-relaxed mt-3">
+              This is a community-powered route mapping platform built specifically to meet the hackathon theme and solve real-world transit access gaps in Kathmandu Valley.
             </p>
           </div>
         </div>

@@ -5,6 +5,7 @@ interface RoutePageProps {
   searchParams: Promise<{
     from?: string;
     to?: string;
+    mode?: string;
   }>;
 }
 
@@ -12,6 +13,7 @@ export default async function RoutePage({ searchParams }: RoutePageProps) {
   const params = await searchParams;
   const from = (params.from ?? '').trim();
   const to = (params.to ?? '').trim();
+  const mode = (params.mode ?? 'any').trim().toLowerCase();
 
   if (!from || !to) {
     return (
@@ -34,7 +36,7 @@ export default async function RoutePage({ searchParams }: RoutePageProps) {
     );
   }
 
-  const searchResponse = await searchRoutes(from, to, { limit: 3 });
+  const searchResponse = await searchRoutes(from, to, { limit: 3, mode: mode as 'any' | 'micro' | 'tempo' });
 
   if (!searchResponse.results.length) {
     return (
@@ -69,7 +71,7 @@ export default async function RoutePage({ searchParams }: RoutePageProps) {
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-2">Route Results</h1>
           <p className="mt-2 text-sm sm:text-base text-gray-600">
-            From <span className="font-semibold text-gray-900">{from}</span> to <span className="font-semibold text-gray-900">{to}</span>
+            From <span className="font-semibold text-gray-900">{from}</span> to <span className="font-semibold text-gray-900">{to}</span> · Mode <span className="font-semibold text-gray-900 capitalize">{mode}</span>
           </p>
         </div>
 

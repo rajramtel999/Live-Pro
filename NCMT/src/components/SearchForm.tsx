@@ -8,6 +8,7 @@ export default function SearchForm() {
   const router = useRouter();
   const [startingPoint, setStartingPoint] = useState('');
   const [destination, setDestination] = useState('');
+  const [mode, setMode] = useState('any');
   const [loading, setLoading] = useState(false);
 
   const stopSuggestions = sampleTransitData.stops
@@ -30,7 +31,7 @@ export default function SearchForm() {
 
     setLoading(true);
     // Navigate to route page with search params
-    router.push(`/route?from=${encodeURIComponent(startingPoint.trim())}&to=${encodeURIComponent(destination.trim())}`);
+    router.push(`/route?from=${encodeURIComponent(startingPoint.trim())}&to=${encodeURIComponent(destination.trim())}&mode=${encodeURIComponent(mode)}`);
   };
 
   return (
@@ -82,6 +83,19 @@ export default function SearchForm() {
           <option key={name} value={name} />
         ))}
       </datalist>
+
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">Mode</label>
+        <select
+          value={mode}
+          onChange={(e) => setMode(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-base"
+        >
+          <option value="any">Any (micro-bus or tempo)</option>
+          <option value="micro">Micro-bus</option>
+          <option value="tempo">Tempo</option>
+        </select>
+      </div>
 
       <p className="text-xs sm:text-sm text-gray-500 px-1">
         💡 Tip: Use major landmark names (e.g., "Ratna Park", "Bouddhanath")
