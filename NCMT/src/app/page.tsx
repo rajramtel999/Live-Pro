@@ -7,7 +7,6 @@ const stats = [
   { value: '100+', label: 'Routes Mapped' },
   { value: '500+', label: 'Stops Documented' },
   { value: '3', label: 'Districts Covered' },
-  { value: '24/7', label: 'Live Tracking' },
 ];
 
 const portals = [
@@ -42,7 +41,7 @@ const portals = [
     cta: 'Plan My Route',
     href: '#search',
     color: 'violet',
-    features: ['Find exact route & stops', 'Fare estimate (NPR)', 'Live vehicle tracking'],
+    features: ['Find exact route & stops', 'Fare estimate (NPR)', 'Find nearest stop'],
   },
 ];
 
@@ -107,10 +106,6 @@ export default function Home() {
           <div className="flex flex-wrap gap-3">
             <Link href="#portals" className="bg-white text-emerald-800 font-bold px-6 py-3 rounded-xl hover:bg-emerald-50 transition shadow-lg">
               Explore the Platform →
-            </Link>
-            <Link href="/live-tracking" className="flex items-center gap-2 border border-white/40 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              View Live Map
             </Link>
           </div>
         </div>
@@ -209,25 +204,6 @@ export default function Home() {
                 <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Live Tracking CTA ────────────────────────────────── */}
-      <section className="bg-gradient-to-r from-emerald-700 to-teal-700 text-white py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3">🚌 Real-Time Vehicle Tracking</h2>
-          <p className="text-emerald-100 text-sm sm:text-base mb-6 max-w-xl mx-auto">
-            Beyond route planning — see live vehicle positions on the map. Drivers share GPS location, commuters watch in real-time. Uber-style tracking for Kathmandu's public transport.
-          </p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Link href="/live-tracking" className="bg-white text-emerald-800 font-bold px-6 py-3 rounded-xl hover:bg-emerald-50 transition shadow-lg">
-              Open Live Map
-            </Link>
-            <Link href="/driver/live" className="flex items-center gap-2 border border-white/40 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              Go Live as Driver
-            </Link>
           </div>
         </div>
       </section>

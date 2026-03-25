@@ -34,19 +34,6 @@ export default function Navbar() {
             >
               Admin
             </Link>
-            <Link
-              href="/live-tracking"
-              className="px-3 py-2 text-sm sm:text-base font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition"
-            >
-              Live
-            </Link>
-            <Link
-              href="/driver/live"
-              className="flex items-center gap-1.5 px-3 py-2 text-sm sm:text-base font-semibold text-white bg-green-600 hover:bg-green-500 rounded-lg transition shadow-sm"
-            >
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              Driver Live
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -93,21 +80,6 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Admin Dashboard
-            </Link>
-            <Link
-              href="/live-tracking"
-              className="block px-4 py-3 text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Live Tracking
-            </Link>
-            <Link
-              href="/driver/live"
-              className="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-white bg-green-600 hover:bg-green-500 rounded-lg transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              Driver Live
             </Link>
           </div>
         )}

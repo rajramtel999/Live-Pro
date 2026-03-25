@@ -1,33 +1,62 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { CircleMarker, MapContainer, Polyline, Popup, TileLayer } from 'react-leaflet';
+import { GoogleMap, useJsApiLoader, DirectionsRenderer, Marker, InfoWindow } from '@react-google-maps/api';
 import type { RouteSearchStopSequenceItem } from '@/types/searchResult';
-import { getStreetRoutePolyline } from '@/lib/routing';
 
 interface MapViewProps {
   stops: RouteSearchStopSequenceItem[];
   activeVehicleCount: number;
 }
 
+const mapContainerStyle = { width: '100%', height: '100%' };
+const DEFAULT_CENTER = { lat: 27.7172, lng: 85.3240 }; // Kathmandu
+
 export default function MapView({ stops, activeVehicleCount }: MapViewProps) {
-  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+  });
+
+  const [directionsResponse, setDirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
 
   const positions = useMemo(
-    () => stops.map((stop) => [stop.latitude, stop.longitude] as [number, number]),
+    () => stops.map((stop) => ({ lat: stop.latitude, lng: stop.longitude })),
     [stops]
   );
 
   useEffect(() => {
-    if (positions.length >= 2) {
-      getStreetRoutePolyline(positions).then(setRouteCoords);
-    }
-  }, [positions]);
+    if (!isLoaded || positions.length < 2) return;
+
+    const directionsService = new window.google.maps.DirectionsService();
+    
+    // Waypoints are all stops EXCEPT the first and last
+    const waypoints = positions.slice(1, -1).map(p => ({
+      location: p,
+      stopover: true
+    }));
+
+    directionsService.route(
+      {
+        origin: positions[0],
+        destination: positions[positions.length - 1],
+        waypoints: waypoints,
+        // Using driving for public transit routes snapped to roads
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          setDirectionsResponse(result);
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      }
+    );
+  }, [isLoaded, positions]);
 
   const vehicleMarkers = useMemo(() => {
-    if (!stops.length || activeVehicleCount <= 0) {
-      return [] as Array<{ id: string; latitude: number; longitude: number; stopName: string }>;
-    }
+    if (!stops.length || activeVehicleCount <= 0) return [];
 
     const markerCount = Math.min(activeVehicleCount, stops.length);
     const step = Math.max(1, Math.floor(stops.length / markerCount));
@@ -38,8 +67,8 @@ export default function MapView({ stops, activeVehicleCount }: MapViewProps) {
 
       return {
         id: `vehicle-${index + 1}`,
-        latitude: stop.latitude,
-        longitude: stop.longitude,
+        lat: stop.latitude,
+        lng: stop.longitude,
         stopName: stop.stopName,
       };
     });
@@ -47,70 +76,77 @@ export default function MapView({ stops, activeVehicleCount }: MapViewProps) {
 
   if (positions.length < 2) {
     return (
-      <div className="h-56 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">
+      <div className="h-56 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500 flex items-center justify-center">
         Not enough stop points to draw a route line.
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="h-56 flex items-center justify-center bg-gray-50 rounded-xl border border-gray-200">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
       </div>
     );
   }
 
   return (
     <div className="h-56 overflow-hidden rounded-xl border border-gray-200">
-      <MapContainer center={positions[0]} zoom={13} scrollWheelZoom={false} className="h-full w-full">
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Polyline 
-          positions={routeCoords.length > 0 ? routeCoords : positions} 
-          pathOptions={{ color: '#15803d', weight: 5 }} 
-        />
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={positions[0] || DEFAULT_CENTER}
+        zoom={13}
+        options={{
+          disableDefaultUI: true,
+          zoomControl: true,
+          styles: [
+            // Lightweight clean style matching the site theme
+            { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+            { featureType: 'transit', stylers: [{ visibility: 'off' }] }
+          ]
+        }}
+      >
+        {/* The DirectionsRenderer automatically draws the snapped blue line and alphabet markers */}
+        {directionsResponse && (
+          <DirectionsRenderer 
+            directions={directionsResponse} 
+            options={{
+              suppressMarkers: false, // let google handle A/B/C stops
+              polylineOptions: {
+                strokeColor: '#3b82f6',
+                strokeWeight: 5,
+                strokeOpacity: 0.8
+              }
+            }} 
+          />
+        )}
 
-        {stops.map((stop, index) => {
-          const isBoarding = index === 0;
-          const isDestination = index === stops.length - 1;
-
-          const color = isBoarding ? '#15803d' : isDestination ? '#b91c1c' : '#475569';
-          const radius = isBoarding || isDestination ? 8 : 5;
-
-          return (
-            <CircleMarker
-              key={stop.stopId}
-              center={[stop.latitude, stop.longitude]}
-              radius={radius}
-              pathOptions={{ color, fillColor: color, fillOpacity: 0.9 }}
-            >
-              <Popup>
-                <div className="text-sm">
-                  <p className="font-semibold">{stop.stopName}</p>
-                  <p>
-                    {isBoarding
-                      ? 'Boarding stop'
-                      : isDestination
-                        ? 'Destination stop'
-                        : `Stop order: ${stop.order}`}
-                  </p>
-                </div>
-              </Popup>
-            </CircleMarker>
-          );
-        })}
-
+        {/* Custom Vehicle Markers */}
         {vehicleMarkers.map((vehicle) => (
-          <CircleMarker
+          <Marker
             key={vehicle.id}
-            center={[vehicle.latitude, vehicle.longitude]}
-            radius={6}
-            pathOptions={{ color: '#059669', fillColor: '#059669', fillOpacity: 0.95 }}
+            position={{ lat: vehicle.lat, lng: vehicle.lng }}
+            icon={{
+              path: window.google.maps.SymbolPath.CIRCLE,
+              fillColor: '#10b981',
+              fillOpacity: 1,
+              strokeColor: '#ffffff',
+              strokeWeight: 2,
+              scale: 8,
+            }}
+            onClick={() => setSelectedVehicle(vehicle.id)}
           >
-            <Popup>
-              <div className="text-sm">
-                <p className="font-semibold">{vehicle.id}</p>
-                <p>Near: {vehicle.stopName}</p>
-              </div>
-            </Popup>
-          </CircleMarker>
+            {selectedVehicle === vehicle.id && (
+              <InfoWindow onCloseClick={() => setSelectedVehicle(null)}>
+                <div className="text-sm p-1">
+                  <p className="font-semibold text-gray-900">{vehicle.id}</p>
+                  <p className="text-gray-500">Near: {vehicle.stopName}</p>
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
         ))}
-      </MapContainer>
+      </GoogleMap>
     </div>
   );
 }
