@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CircleMarker, MapContainer, Polyline, Popup, TileLayer } from 'react-leaflet';
 import type { RouteSearchStopSequenceItem } from '@/types/searchResult';
+import { getStreetRoutePolyline } from '@/lib/routing';
 
 interface MapViewProps {
   stops: RouteSearchStopSequenceItem[];
@@ -10,10 +11,18 @@ interface MapViewProps {
 }
 
 export default function MapView({ stops, activeVehicleCount }: MapViewProps) {
+  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
+
   const positions = useMemo(
     () => stops.map((stop) => [stop.latitude, stop.longitude] as [number, number]),
     [stops]
   );
+
+  useEffect(() => {
+    if (positions.length >= 2) {
+      getStreetRoutePolyline(positions).then(setRouteCoords);
+    }
+  }, [positions]);
 
   const vehicleMarkers = useMemo(() => {
     if (!stops.length || activeVehicleCount <= 0) {
@@ -51,7 +60,10 @@ export default function MapView({ stops, activeVehicleCount }: MapViewProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Polyline positions={positions} pathOptions={{ color: '#15803d', weight: 5 }} />
+        <Polyline 
+          positions={routeCoords.length > 0 ? routeCoords : positions} 
+          pathOptions={{ color: '#15803d', weight: 5 }} 
+        />
 
         {stops.map((stop, index) => {
           const isBoarding = index === 0;
