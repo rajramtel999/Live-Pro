@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TimroData</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <div class="nav-box">
+        <div class="nav-logo">
+          <i data-lucide="shield-alert"></i>
+          <span>TimroData</span>
+        </div>
+        <div class="nav-info">
+          <span id="nav-time"></span>
+          <span class="live-badge"><span class="dot"></span> Live Scan</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-box">
+      <div class="hero-tag">
+        <i data-lucide="eye" style="width: 14px; height: 14px"></i> Privacy
+        Exposure Demo
+      </div>
+      <h1>What does this website<br />know about you?</h1>
+      <p>
+        Every website you visit silently collects this data - no permissions
+        needed.
+      </p>
+      <div class="hero-arrow"><i data-lucide="chevrons-down"></i></div>
+    </div>
+
+    <div class="main-wrap">
+      <div class="box">
+        <div class="label-warn">
+          <i data-lucide="zap" style="width: 14px; height: 14px"></i> No
+          Permission Required
+        </div>
+        <h2 class="box-title">Baseline Data Exposure</h2>
+        <p class="box-desc">
+          This data is silently collected the moment you open any webpage.
+        </p>
+
+        <div class="grid">
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="globe"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">IP Address</span>
+              <span class="item-val" id="val-ip">Loading...</span>
+              <span class="item-hint">Your internet ID</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="map-pin"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">Rough Location</span>
+              <span class="item-val" id="val-loc">Loading...</span>
+              <span class="item-hint">City/Country location</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="wifi"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">ISP / Network</span>
+              <span class="item-val" id="val-isp">Loading...</span>
+              <span class="item-hint">Internet provider</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="app-window"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">Browser</span>
+              <span class="item-val" id="val-browser">Loading...</span>
+              <span class="item-hint">Browser name</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="monitor"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">Operating System</span>
+              <span class="item-val" id="val-os">Loading...</span>
+              <span class="item-hint">Device platform</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="languages"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">Language</span>
+              <span class="item-val" id="val-lang">Loading...</span>
+              <span class="item-hint">Browser language</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="clock"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">Timezone</span>
+              <span class="item-val" id="val-time">Loading...</span>
+              <span class="item-hint">Local timezone</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="icon-wrap"><i data-lucide="scan"></i></div>
+            <div class="text-wrap">
+              <span class="item-name">Screen Resolution</span>
+              <span class="item-val" id="val-screen">Loading...</span>
+              <span class="item-hint">Display size</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Permissions -->
+      <div class="box">
+        <div class="label-info">
+          <i data-lucide="lock" style="width: 14px; height: 14px"></i> Browser
+          Permissions
+        </div>
+        <h2 class="box-title">Permission Status</h2>
+        <p class="box-desc">Sensitive APIs require your explicit approval.</p>
+
+        <div class="perm-list">
+          <div class="perm-row">
+            <div class="perm-col">
+              <div class="icon-wrap"><i data-lucide="map-pin"></i></div>
+              <div class="text-wrap">
+                <span class="item-name">Location Access</span>
+                <span class="item-hint">Exact GPS coords - street level</span>
+              </div>
+            </div>
+            <span class="status status-prompt" id="perm-loc">Checking</span>
+          </div>
+          <div class="perm-row">
+            <div class="perm-col">
+              <div class="icon-wrap"><i data-lucide="camera"></i></div>
+              <div class="text-wrap">
+                <span class="item-name">Camera Access</span>
+                <span class="item-hint">Live video feed</span>
+              </div>
+            </div>
+            <span class="status status-prompt" id="perm-cam">Checking</span>
+          </div>
+          <div class="perm-row">
+            <div class="perm-col">
+              <div class="icon-wrap"><i data-lucide="mic"></i></div>
+              <div class="text-wrap">
+                <span class="item-name">Microphone Access</span>
+                <span class="item-hint"
+                  >Audio capture capture rooms bounds</span
+                >
+              </div>
+            </div>
+            <span class="status status-prompt" id="perm-mic">Checking</span>
+          </div>
+          <div class="perm-row">
+            <div class="perm-col">
+              <div class="icon-wrap"><i data-lucide="bell"></i></div>
+              <div class="text-wrap">
+                <span class="item-name">Notifications</span>
+                <span class="item-hint">Push alerts</span>
+              </div>
+            </div>
+            <span class="status status-prompt" id="perm-notif">Checking</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Location Demo -->
+      <div class="box">
+        <div class="label-danger">
+          <i data-lucide="alert-triangle" style="width: 14px; height: 14px"></i>
+          Permission Required
+        </div>
+        <h2 class="box-title">Location Permission Demo</h2>
+        <p class="box-desc">
+          Click below to see how granting location access reveals your exact GPS
+          position.
+        </p>
+
+        <div class="center-content">
+          <button class="action-btn" id="btn-loc">
+            <i data-lucide="crosshair" style="width: 18px; height: 18px"></i>
+            Request Location Access
+          </button>
+          <div class="error-msg" id="err-loc" style="display: none"></div>
+          <div class="loc-data" id="res-loc" style="display: none">
+            <div class="grid">
+              <div class="item">
+                <div class="text-wrap">
+                  <span class="item-name">Latitude</span>
+                  <span class="item-val" id="val-lat">--</span>
+                </div>
+              </div>
+              <div class="item">
+                <div class="text-wrap">
+                  <span class="item-name">Longitude</span>
+                  <span class="item-val" id="val-lon">--</span>
+                </div>
+              </div>
+              <div class="item">
+                <div class="text-wrap">
+                  <span class="item-name">Accuracy</span>
+                  <span class="item-val" id="val-acc">--</span>
+                </div>
+              </div>
+              <div class="item">
+                <div class="text-wrap">
+                  <span class="item-name">Altitude</span>
+                  <span class="item-val" id="val-alt">--</span>
+                </div>
+              </div>
+            </div>
+            <div class="map-box">
+              <p style="margin: 0 0 5px 0; color: #586069; font-weight: bold">
+                Your location:
+              </p>
+              <p
+                id="map-coords"
+                style="margin: 0 0 15px 0; font-weight: bold; font-size: 18px"
+              ></p>
+              <div
+                id="gmap"
+                style="
+                  width: 100%;
+                  height: 300px;
+                  background-color: #e1e4e8;
+                  border-radius: 6px;
+                  display: none;
+                "
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Tips -->
+      <div class="box">
+        <div class="label-success">
+          <i data-lucide="shield-check" style="width: 14px; height: 14px"></i>
+          Stay Protected
+        </div>
+        <h2 class="box-title">Privacy Protection Tips</h2>
+        <p class="box-desc">
+          Simple habits that drastically reduce your digital footprint.
+        </p>
+
+        <div class="tips-grid">
+          <div class="tip-box">
+            <div class="icon-center">
+              <i data-lucide="settings" style="width: 18px; height: 18px"></i>
+            </div>
+            <h3>Review Permissions</h3>
+            <p>
+              Regularly audit what you've granted. Go to browser Settings and
+              revoke anything unnecessary.
+            </p>
+          </div>
+          <div class="tip-box">
+            <div class="icon-center">
+              <i data-lucide="shield" style="width: 18px; height: 18px"></i>
+            </div>
+            <h3>Use a VPN</h3>
+            <p>
+              A VPN hides your real IP and location from websites you visit,
+              making tracking much harder.
+            </p>
+          </div>
+          <div class="tip-box">
+            <div class="icon-center">
+              <i
+                data-lucide="map-pin-off"
+                style="width: 18px; height: 18px"
+              ></i>
+            </div>
+            <h3>Block Location</h3>
+            <p>
+              Keep location access denied globally. Only approve when needed.
+            </p>
+          </div>
+          <div class="tip-box">
+            <div class="icon-center">
+              <i data-lucide="flame" style="width: 18px; height: 18px"></i>
+            </div>
+            <h3>Private Browsers</h3>
+            <p>
+              Firefox and Brave block trackers by default. Far safer than
+              regular browsers.
+            </p>
+          </div>
+          <div class="tip-box">
+            <div class="icon-center">
+              <i data-lucide="trash-2" style="width: 18px; height: 18px"></i>
+            </div>
+            <h3>Clear Cookies</h3>
+            <p>Cookies track sessions across sites. Clear them weekly.</p>
+          </div>
+          <div class="tip-box">
+            <div class="icon-center">
+              <i data-lucide="file-text" style="width: 18px; height: 18px"></i>
+            </div>
+            <h3>Read Before Allow</h3>
+            <p>If unclear why a site needs an API, deny it instantly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: About -->
+      <div class="box about-box">
+        <div class="about-flex">
+          <div
+            class="icon-wrap"
+            style="background: #fff; border: 1px solid #d1d5da"
+          >
+            <i data-lucide="shield-alert" style="width: 26px; height: 26px"></i>
+          </div>
+          <div class="about-text">
+            <h3 style="margin: 0 0 10px 0; font-size: 18px">About This Tool</h3>
+            <p>
+              TimroData is an open tool that demonstrates how much info browsers
+              expose passively. All data runs only on your device - nothing is
+              sent to any server. There is no tracking, no analytics, no
+              cookies.
+            </p>
+            <div class="chips">
+              <span class="chip"
+                ><i data-lucide="check" style="width: 12px; height: 12px"></i>
+                No data stored</span
+              >
+              <span class="chip"
+                ><i data-lucide="check" style="width: 12px; height: 12px"></i>
+                No server calls</span
+              >
+              <span class="chip"
+                ><i data-lucide="check" style="width: 12px; height: 12px"></i>
+                Educational</span
+              >
+              <span class="chip"
+                ><i data-lucide="check" style="width: 12px; height: 12px"></i>
+                Open source</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot-bar">
+        <div>
+          <i data-lucide="shield-alert" style="width: 18px; height: 18px"></i>
+          TimroData
+        </div>
+        <p>2026 Privacy Awareness Education Demo</p>
+        <p>
+          <i data-lucide="lock" style="width: 14px; height: 14px"></i> No data
+          is stored, collected or transmitted
+        </p>
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
