@@ -261,7 +261,7 @@ h1 .highlight {
   display: flex;
   flex-direction: column;
   background: linear-gradient(145deg, rgba(20, 22, 40, 1), rgba(10, 11, 20, 1));
-  
+
   /* Initial flat styling moved here */
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -270,8 +270,6 @@ h1 .highlight {
     box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1),
     border-color 0.5s ease;
 }
-
-
 
 /* Improved Smooth Hover Glow Animation */
 .project-card:hover .project-card-inner {
