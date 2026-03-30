@@ -11,8 +11,6 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     DEBUG = os.getenv('DEBUG', 'True') == 'True'
     
-    # Database
-    DATABASE_PATH = os.getenv('DATABASE_PATH', 'db/timrodata.sqlite3')
     
     # GeoIP Service (Week 3+)
     GEOIP_API_KEY = os.getenv('GEOIP_API_KEY', '')
